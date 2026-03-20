@@ -83,7 +83,7 @@ export const portfolioData = {
   ],
   education: [
     "Tecnólogo em Gestão Pública — UDF",
-    "Técnico em Informática — Claros Cursos",
+    "Técnico em Informática — Claro Cursos",
     "Web Designer — SENAI",
     "Front-end — SENAI",
     "Full Stack — SENAI",
