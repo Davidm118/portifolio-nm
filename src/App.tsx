@@ -1,4 +1,5 @@
 import { portfolioData } from './data/portfolio';
+import { useAntiDevTools } from './hooks/useAntiDevTools';
 import {
   Github,
   Mail,
@@ -10,7 +11,6 @@ import {
   Settings,
   Briefcase,
   GraduationCap,
-  Languages,
   CheckCircle2,
   ChevronRight,
   Menu,
@@ -19,9 +19,147 @@ import {
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
+// Tipo para experiência
+type HighlightProject = {
+  title: string;
+  duration: string;
+  details: string[];
+};
+
+type Experience = {
+  company: string;
+  role: string;
+  duration: string;
+  details: string[];
+  highlightProject?: HighlightProject;
+};
+
+// Accordion para cada item de experiência
+function AccordionItem({ exp }: { exp: Experience }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
+      >
+        <div>
+          <span className="text-primary font-bold text-sm block mb-1">{exp.duration}</span>
+          <h3 className="text-lg font-bold text-slate-900">{exp.company}</h3>
+          <p className="text-slate-500 text-sm">{exp.role}</p>
+        </div>
+        <ChevronRight
+          size={20}
+          className={`text-primary shrink-0 transition-transform duration-300 ${open ? 'rotate-90' : ''}`}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 border-t border-slate-100 pt-5">
+              <ul className="space-y-3 mb-6">
+                {exp.details.map((detail: string, dIdx: number) => (
+                  <li key={dIdx} className="text-slate-600 text-sm flex items-start gap-2">
+                    <ChevronRight size={14} className="text-primary mt-1 shrink-0" />
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+              {exp.highlightProject && (
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                  <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <CheckCircle2 size={18} className="text-primary" /> {exp.highlightProject.title}
+                  </h4>
+                  <p className="text-xs text-primary font-bold mb-3 uppercase tracking-wider">
+                    Destaque • {exp.highlightProject.duration}
+                  </p>
+                  <ul className="space-y-2">
+                    {exp.highlightProject.details.map((pDetail: string, pIdx: number) => (
+                      <li key={pIdx} className="text-slate-500 text-xs leading-relaxed">• {pDetail}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Accordion para formação + idiomas unificados
+type Language = { name: string; level: string };
+
+function EducationAccordion({ items, languages }: { items: string[]; languages: Language[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors"
+      >
+        <span className="font-semibold text-slate-700">Ver formação, cursos e idiomas</span>
+        <ChevronRight
+          size={18}
+          className={`text-primary transition-transform duration-300 ${open ? 'rotate-90' : ''}`}
+        />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-6 pb-6 border-t border-slate-100 pt-4 space-y-3">
+              {items.map((item) => (
+                <div key={item} className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                  <div className="w-2 h-2 bg-primary rounded-full shrink-0"></div>
+                  <span className="text-slate-700 text-sm font-medium">{item}</span>
+                </div>
+              ))}
+              <div className="pt-3">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1 mb-4">Idiomas</p>
+                {languages.map((lang) => (
+                  <div key={lang.name} className="mb-4">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-bold text-slate-900 text-sm">{lang.name}</span>
+                      <span className="text-xs text-slate-500">
+                        {lang.name === 'Inglês' ? 'Avançado' : lang.level}
+                      </span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full"
+                        style={{ width: lang.name === 'Português' ? '100%' : '75%' }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  useAntiDevTools();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -34,7 +172,6 @@ export default function App() {
     { name: 'NexusMarket', href: '#nexusmarket' },
     { name: 'Stack', href: '#stack' },
     { name: 'Experiência', href: '#experiencia' },
-    { name: 'Contato', href: '#contato' },
   ];
 
   return (
@@ -95,7 +232,7 @@ export default function App() {
                 className="bg-primary text-white text-center py-3 rounded-xl font-semibold"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Contato
+                Vamos conversar
               </a>
             </motion.div>
           )}
@@ -103,7 +240,7 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
+      <section className="pt-24 pb-20 md:pt-32 md:pb-32 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <motion.div
@@ -114,42 +251,45 @@ export default function App() {
               <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6">
                 Disponível para novos projetos
               </span>
-              <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-6 tracking-tight">
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] mb-4 tracking-tight">
                 {portfolioData.name}
               </h1>
-              <h2 className="text-xl md:text-2xl font-semibold text-primary-dark mb-6">
+              <h2 className="text-base md:text-xl font-semibold text-primary-dark mb-6 leading-snug">
                 {portfolioData.title}
               </h2>
-              <p className="text-lg text-slate-600 mb-10 max-w-lg leading-relaxed">
-                {portfolioData.subtitle}
+              <p className="text-base md:text-lg text-slate-600 mb-10 max-w-lg leading-relaxed">
+                Full Stack com olho de designer e foco em segurança: RBAC, Rate Limit, Auth e sistemas completos.
               </p>
               <div className="flex flex-wrap gap-4">
                 <a href="#nexusmarket" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-primary/25 flex items-center gap-2">
                   Ver Projeto Principal <ChevronRight size={20} />
                 </a>
-                <a href="#contato" className="bg-white border border-slate-200 hover:border-primary text-slate-700 px-8 py-4 rounded-2xl font-bold transition-all flex items-center gap-2">
+                <a href="#contato" className="hidden md:flex bg-white border border-slate-200 hover:border-primary text-slate-700 px-8 py-4 rounded-2xl font-bold transition-all items-center gap-2">
                   Entrar em contato
                 </a>
               </div>
             </motion.div>
 
+            {/* Card hero — apenas desktop */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
+              className="relative hidden md:block"
             >
-              <div className="aspect-square bg-gradient-to-br from-primary to-primary-dark rounded-[40px] rotate-3 absolute inset-0 opacity-10"></div>
-              <div className="card aspect-square relative z-10 p-8 flex flex-col justify-center items-center text-center bg-white/40 backdrop-blur-sm">
+              <div className="absolute inset-4 rounded-[40px] bg-gradient-to-br from-primary/14 to-primary-dark/10 rotate-3 shadow-[0_30px_80px_-45px_rgba(11,102,255,0.55)]"></div>
+              <div className="absolute inset-0 rounded-[44px] border border-primary/20 rotate-6"></div>
+              <div className="card relative z-10 border border-slate-200/80 p-8 flex flex-col justify-center items-center text-center bg-white/40 backdrop-blur-sm">
                 <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mb-6">
                   <Code2 size={48} className="text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Full Stack Engineering</h3>
-                <p className="text-slate-500">Arquitetura robusta e interfaces intuitivas para negócios escaláveis.</p>
-
+                <p className="text-slate-500 text-sm leading-relaxed">
+                  Interfaces cuidadas, arquitetura sólida e segurança de ponta a ponta.
+                </p>
                 <div className="mt-8 grid grid-cols-2 gap-4 w-full">
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                    <p className="text-2xl font-bold text-primary">8+</p>
+                    <p className="text-2xl font-bold text-primary">3</p>
                     <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Anos Exp.</p>
                   </div>
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -172,11 +312,15 @@ export default function App() {
               <div className="w-20 h-1.5 bg-primary rounded-full"></div>
             </div>
             <div className="md:col-span-2 space-y-6">
-              {portfolioData.about.map((paragraph, idx) => (
-                <p key={idx} className="text-lg text-slate-600 leading-relaxed">
-                  {paragraph}
-                </p>
-              ))}
+              <p className="text-lg text-slate-600 leading-relaxed">
+               Desenvolvedor Full Stack com experiência em gestão pública e operações militares no Exército Brasileiro, onde atuei na automação de processos administrativos, gestão de dados e liderança operacional.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed">
+               Criador do NexusMarket, um SaaS para gestão de negócios físicos com ERP, PDV, CRM e Delivery integrados. O sistema conta com um motor de IA baseado no Gemini, dividido em agentes especializados: suporte ao cliente, análise financeira e automação de cadastro de produtos.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed">
+                Atuo do backend ao frontend, com foco em arquitetura escalável, segurança, experiência do usuário e soluções aplicadas ao mundo real.
+              </p>
             </div>
           </div>
         </div>
@@ -200,7 +344,8 @@ export default function App() {
                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
                   <Layout className="text-primary" size={24} /> Módulos do Sistema
                 </h3>
-                <div className="grid sm:grid-cols-2 gap-4">
+                {/* FIX: grid responsivo — 1 col no mobile, 2 no sm+ */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {portfolioData.mainProject.modules.map((module) => (
                     <div key={module} className="flex items-center gap-3 text-slate-300">
                       <CheckCircle2 className="text-primary shrink-0" size={18} />
@@ -217,7 +362,7 @@ export default function App() {
                 <div className="space-y-4">
                   {portfolioData.mainProject.technicalHighlights.map((highlight) => (
                     <div key={highlight} className="flex items-center gap-3 text-slate-300">
-                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full shrink-0"></div>
                       <span className="text-sm">{highlight}</span>
                     </div>
                   ))}
@@ -225,12 +370,17 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between">
-              <div className="card bg-slate-800 border-slate-700 p-8 mb-8">
+            <div className="flex flex-col justify-between gap-8">
+              <div className="card bg-slate-800 border-slate-700 p-8">
                 <h3 className="text-xl font-bold mb-6">Stack Tecnológica</h3>
-                <div className="flex flex-wrap gap-3">
-                  {portfolioData.mainProject.stack.map((item) => (
-                    <span key={item} className="px-4 py-2 bg-slate-700 text-slate-200 rounded-xl text-sm font-medium">
+                <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap">
+                  {portfolioData.mainProject.stack.map((item, idx) => (
+                    <span
+                      key={item}
+                      className={`flex min-h-11 items-center justify-center rounded-xl bg-slate-700 px-4 py-2 text-center text-sm font-medium text-slate-200 ${
+                        idx === portfolioData.mainProject.stack.length - 1 ? 'col-span-2 sm:col-span-1' : ''
+                      }`}
+                    >
                       {item}
                     </span>
                   ))}
@@ -242,7 +392,7 @@ export default function App() {
                 <div className="relative bg-slate-800 p-8 rounded-3xl border border-slate-700">
                   <h4 className="text-lg font-bold mb-4">Visão de Produto</h4>
                   <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                    O NexusMarket não é apenas um software, é uma solução de ponta a ponta para negócios que precisam de agilidade operacional e dados precisos para crescer.
+                    O NexusMarket vai além de um sistema de gestão, conta com um motor de IA baseado no Gemini, dividido em agentes especializados: suporte ao cliente, análise financeira e automação de cadastro de produtos, tornando a operação mais inteligente e autônoma.
                   </p>
                   <a
                     href="https://wa.me/5561992826456"
@@ -251,6 +401,14 @@ export default function App() {
                     className="w-full py-4 bg-primary hover:bg-primary-dark text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2"
                   >
                     Solicitar Demo <ExternalLink size={18} />
+                  </a>
+                  <a
+                    href="/NexusMarket_BrandBook.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-4 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 mt-3"
+                  >
+                    Ver Documentação <ExternalLink size={18} />
                   </a>
                 </div>
               </div>
@@ -269,7 +427,8 @@ export default function App() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* FIX: 1 col mobile, 2 col tablet, 4 col desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="card p-6 border-t-4 border-t-primary">
               <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
                 <Database className="text-primary" size={24} />
@@ -278,7 +437,7 @@ export default function App() {
               <ul className="space-y-3">
                 {portfolioData.techStack.backend.map(item => (
                   <li key={item} className="text-slate-600 text-sm flex items-center gap-2">
-                    <div className="w-1 h-1 bg-slate-300 rounded-full"></div> {item}
+                    <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div> {item}
                   </li>
                 ))}
               </ul>
@@ -292,7 +451,7 @@ export default function App() {
               <ul className="space-y-3">
                 {portfolioData.techStack.frontend.map(item => (
                   <li key={item} className="text-slate-600 text-sm flex items-center gap-2">
-                    <div className="w-1 h-1 bg-slate-300 rounded-full"></div> {item}
+                    <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div> {item}
                   </li>
                 ))}
               </ul>
@@ -306,7 +465,7 @@ export default function App() {
               <ul className="space-y-3">
                 {portfolioData.techStack.devops.map(item => (
                   <li key={item} className="text-slate-600 text-sm flex items-center gap-2">
-                    <div className="w-1 h-1 bg-slate-300 rounded-full"></div> {item}
+                    <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div> {item}
                   </li>
                 ))}
               </ul>
@@ -320,7 +479,7 @@ export default function App() {
               <ul className="space-y-3">
                 {portfolioData.techStack.business.map(item => (
                   <li key={item} className="text-slate-600 text-sm flex items-center gap-2">
-                    <div className="w-1 h-1 bg-slate-300 rounded-full"></div> {item}
+                    <div className="w-1 h-1 bg-slate-300 rounded-full shrink-0"></div> {item}
                   </li>
                 ))}
               </ul>
@@ -329,110 +488,47 @@ export default function App() {
         </div>
       </section>
 
-      {/* Experience Section */}
-      <section id="experiencia" className="py-24 bg-slate-50">
+      {/* Education + Experience — mesma seção, fluxo contínuo */}
+      <section id="experiencia" className="py-16 bg-slate-50">
         <div className="section-container">
-          <h2 className="heading-2 text-center mb-16">Experiência Profissional</h2>
+          <div className="max-w-3xl mx-auto space-y-12">
 
-          <div className="max-w-3xl mx-auto space-y-8">
-            {portfolioData.experience.map((exp, idx) => (
-              <div key={idx} className="relative pl-6 border-l-2 border-slate-200">
-                {/* Timeline dot */}
-                <div className="absolute -left-[9px] top-8 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm"></div>
-
-                <div className="card p-8">
-                  <span className="text-primary font-bold text-sm mb-2 block">{exp.duration}</span>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-1">{exp.company}</h3>
-                  <p className="text-slate-500 font-medium mb-6">{exp.role}</p>
-
-                  <ul className="space-y-3 mb-8">
-                    {exp.details.map((detail, dIdx) => (
-                      <li key={dIdx} className="text-slate-600 text-sm flex items-start gap-2">
-                        <ChevronRight size={14} className="text-primary mt-1 shrink-0" />
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  {exp.highlightProject && (
-                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100">
-                      <h4 className="font-bold text-slate-900 mb-3 flex items-center gap-2">
-                        <CheckCircle2 size={18} className="text-primary" /> {exp.highlightProject.title}
-                      </h4>
-                      <p className="text-xs text-primary font-bold mb-3 uppercase tracking-wider">
-                        Destaque • {exp.highlightProject.duration}
-                      </p>
-                      <ul className="space-y-2">
-                        {exp.highlightProject.details.map((pDetail, pIdx) => (
-                          <li key={pIdx} className="text-slate-500 text-xs leading-relaxed">
-                            • {pDetail}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Education & Languages */}
-      <section className="py-24 bg-white">
-        <div className="section-container">
-          <div className="grid md:grid-cols-2 gap-12">
+            {/* Formação */}
             <div>
-              <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
                 <GraduationCap className="text-primary" /> Formação e Cursos
               </h2>
-              <div className="space-y-4">
-                {portfolioData.education.map((item) => (
-                  <div key={item} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-4 group hover:border-primary/30 transition-colors">
-                    <div className="w-2 h-2 bg-primary rounded-full opacity-40 group-hover:opacity-100 transition-opacity"></div>
-                    <span className="text-slate-700 font-medium">{item}</span>
+              <EducationAccordion
+                items={portfolioData.education}
+                languages={portfolioData.languages}
+              />
+            </div>
+
+            {/* Experiência */}
+            <div>
+              <h2 className="text-2xl md:text-4xl font-bold text-center mb-8">Experiência Profissional</h2>
+              <div className="space-y-3">
+                {portfolioData.experience.map((exp, idx) => (
+                  <AccordionItem key={idx} exp={exp} />
+                ))}
+              </div>
+            </div>
+
+            {/* Diferenciais */}
+            <div>
+              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                <CheckCircle2 className="text-primary" /> Diferenciais
+              </h2>
+              <div className="grid grid-cols-1 gap-3">
+                {portfolioData.differentials.map((diff) => (
+                  <div key={diff} className="flex items-start gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
+                    <CheckCircle2 size={18} className="text-primary mt-0.5 shrink-0" />
+                    <span className="text-sm text-slate-700 font-medium">{diff}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-12">
-              <div>
-                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                  <Languages className="text-primary" /> Idiomas
-                </h2>
-                <div className="space-y-6">
-                  {portfolioData.languages.map((lang) => (
-                    <div key={lang.name}>
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-slate-900">{lang.name}</span>
-                        <span className="text-sm text-slate-500">{lang.level}</span>
-                      </div>
-                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary rounded-full"
-                          style={{ width: lang.name === 'Português' ? '100%' : '75%' }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold mb-8 flex items-center gap-3">
-                  <CheckCircle2 className="text-primary" /> Diferenciais
-                </h2>
-                <div className="grid grid-cols-1 gap-3">
-                  {portfolioData.differentials.map((diff) => (
-                    <div key={diff} className="flex items-start gap-3 p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                      <CheckCircle2 size={18} className="text-primary mt-0.5 shrink-0" />
-                      <span className="text-sm text-slate-700 font-medium">{diff}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -445,7 +541,7 @@ export default function App() {
             Disponível para projetos freelance, consultorias e colaborações técnicas.
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <a
               href={`mailto:${portfolioData.contact.email}`}
               className="card bg-slate-800 border-slate-700 p-8 hover:bg-slate-700 transition-all group"

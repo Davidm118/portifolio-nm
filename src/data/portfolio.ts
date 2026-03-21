@@ -1,14 +1,14 @@
 export const portfolioData = {
   name: "David M. Mota",
   title: "Full Stack Engineer | Founder do NexusMarket",
-  subtitle: "Construo sistemas SaaS completos (ERP, PDV, CRM e Delivery) com foco em operação real, performance e escalabilidade.",
+ subtitle: "Full Stack com olho de designer e foco em segurança: RBAC, Rate Limit, Auth e sistemas completos.",
   about: [
-    "Desenvolvedor Full Stack com background em gestão pública e experiência militar, atuando na organização de processos, estruturação de dados complexos e liderança de equipes.",
-    "Criador do NexusMarket, um sistema SaaS completo para gestão de negócios físicos, integrando ERP, PDV, produção, CRM e delivery em uma única plataforma.",
+    "Desenvolvedor Full Stack com experiência em gestão pública e operações militares no Exército Brasileiro, onde atuei na automação de processos administrativos, gestão de dados e liderança operacional.",  
+    "Criador do NexusMarket, um SaaS para gestão de negócios físicos com ERP, PDV, CRM e Delivery integrados. O sistema conta com um motor de IA baseado no Gemini, dividido em agentes especializados: suporte ao cliente, análise financeira e automação de cadastro de produtos.", 
     "Atuo do backend ao frontend, com foco em arquitetura escalável, segurança, experiência do usuário e soluções aplicadas ao mundo real."
   ],
   mainProject: {
-    title: "NexusMarket — ERP SaaS Completo",
+    title: "NexusMarket ERP SaaS Completo",
     description: "Projeto pessoal focado em resolver problemas reais de gestão operacional.",
     modules: [
       "PDV com modo fullscreen",
@@ -59,10 +59,11 @@ export const portfolioData = {
     {
       company: "Exército Brasileiro",
       role: "Área Administrativa e Operacional",
-      duration: "8 anos",
+      duration: "",
       details: [
         "2 anos em corpo de tropa",
         "6 anos na área administrativa",
+        "Condecorado com Honra ao Mérito e Medalha Mérito Granadeiro",
         "Automação de processos administrativos",
         "Gestão de recursos humanos",
         "Organização e estruturação de dados",
@@ -83,15 +84,23 @@ export const portfolioData = {
   ],
   education: [
     "Tecnólogo em Gestão Pública — UDF",
+    "Gestão de Riscos em Processos de Trabalho",
+    "Análise Ex Ante de Políticas Públicas",
+    "Planejamento Estratégico para Organizações Públicas",
+    "Defesa do Usuário e Simplificação",
+    "Introdução ao Orçamento Público",
+    "Gestão Pessoal - Base da Liderança",
+    "Segurança da Informação na Transformação Digital",
     "Técnico em Informática — Claro Cursos",
     "Web Designer — SENAI",
     "Front-end — SENAI",
+    "Python",
     "Full Stack — SENAI",
     "Soft Skills — SENAI"
   ],
   languages: [
     { name: "Português", level: "Nativo" },
-    { name: "Inglês", level: "Intermediário/Avançado (8 anos — CIL Sobradinho/DF)" }
+    { name: "Inglês", level: "Avançado" }
   ],
   differentials: [
     "Construção de sistema SaaS completo",
