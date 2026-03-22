@@ -264,9 +264,6 @@ export default function App() {
                 <a href="#nexusmarket" className="bg-primary hover:bg-primary-dark text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-primary/25 flex items-center gap-2">
                   Ver Projeto Principal <ChevronRight size={20} />
                 </a>
-                <a href="#contato" className="hidden md:flex bg-white border border-slate-200 hover:border-primary text-slate-700 px-8 py-4 rounded-2xl font-bold transition-all items-center gap-2">
-                  Entrar em contato
-                </a>
               </div>
             </motion.div>
 
